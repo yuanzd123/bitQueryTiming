@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import re
 import requests
 import pandas as pd
 import openpyxl
@@ -55,18 +56,9 @@ query = """
 """
 # result = run_query(query)  # Execute the query
 result = {'data': {'ethereum': {'dexTrades': [{'exchange': {'name': None, 'address': {'address': '0x137f34df5bcdb30f5e858fc77cb7ab60f8f7a09a'}}, 'baseCurrency': {'base_sc': '0x6b23c89196deb721e6fd9726e6c76e4810a464bc', 'base': 'XWG'}, 'quoteCurrency': {'quote_sc': '0x181801f00df1bd997d38dd579dbd44bf9b5a6d2d', 'quote': 'YOU'}, 'baseAmount': 2.6579755755937014e+19, 'quoteAmount': 97.461156, 'date': {'dt': '2022-03-16'}, 'Total_USD': 1.2516000397597678e+18, 'Tx_count': 1, 'smartContract': {'address': {'sc': '0x903426bcd04661ae7a32e451e0ac7f372d3bb7b6'}}}, {'exchange': {'name': None, 'address': {'address': '0x137f34df5bcdb30f5e858fc77cb7ab60f8f7a09a'}}, 'baseCurrency': {'base_sc': '0x181801f00df1bd997d38dd579dbd44bf9b5a6d2d', 'base': 'YOU'}, 'quoteCurrency': {'quote_sc': '0x6b23c89196deb721e6fd9726e6c76e4810a464bc', 'quote': 'XWG'}, 'baseAmount': 97.461156, 'quoteAmount': 2.6579755755937014e+19, 'date': {'dt': '2022-03-16'}, 'Total_USD': 1.2516000397597678e+18, 'Tx_count': 1, 'smartContract': {'address': {'sc': '0x903426bcd04661ae7a32e451e0ac7f372d3bb7b6'}}}, {'exchange': {'name': 'Pancake v2', 'address': {'address': '0xca143ce32fe78f1f7019d7d551a6402fc5350c73'}}, 'baseCurrency': {'base_sc': '0x23396cf899ca06c4472205fc903bdb4de249d6fc', 'base': 'UST'}, 'quoteCurrency': {'quote_sc': '0x6b23c89196deb721e6fd9726e6c76e4810a464bc', 'quote': 'XWG'}, 'baseAmount': 0.004777912937316232, 'quoteAmount': 7.652213677514035e+16, 'date': {'dt': '2022-03-15'}, 'Total_USD': 4042161017155593.0, 'Tx_count': 1, 'smartContract': {'address': {'sc': '0x06bb21bbadf4d650532046b92398da6462b8e5eb'}}}, {'exchange': {'name': None, 'address': {'address': '0x9a272d734c5a0d7d84e0a892e891a553e8066dce'}}, 'baseCurrency': {'base_sc': '0x55d398326f99059ff775485246999027b3197955', 'base': 'USDT'}, 'quoteCurrency': {'quote_sc': '0xc9882def23bc42d53895b8361d0b1edc7570bc6a', 'quote': 'FIST'}, 'baseAmount': 69236080.70221113, 'quoteAmount': 35662656.379215, 'date': {'dt': '2022-03-15'}, 'Total_USD': 69343316.64352229, 'Tx_count': 22714, 'smartContract': {'address': {'sc': '0xb4ec801aed8c92f2e69589518aaa127afb37d8c9'}}}, {'exchange': {'name': 'Pancake v2', 'address': {'address': '0xca143ce32fe78f1f7019d7d551a6402fc5350c73'}}, 'baseCurrency': {'base_sc': '0x55d398326f99059ff775485246999027b3197955', 'base': 'USDT'}, 'quoteCurrency': {'quote_sc': '0x26619fa1d4c957c58096bbbeca6588dcfb12e109', 'quote': 'TIME'}, 'baseAmount': 4684454.705493295, 'quoteAmount': 22211219.082697917, 'date': {'dt': '2022-03-17'}, 'Total_USD': 4691573.218440662, 'Tx_count': 3493, 'smartContract': {'address': {'sc': '0xad1fedfb04377c4b849cef6ef9627bca41955fa0'}}}, {'exchange': {'name': None, 'address': {'address': '0x9a272d734c5a0d7d84e0a892e891a553e8066dce'}}, 'baseCurrency': {'base_sc': '0x55d398326f99059ff775485246999027b3197955', 'base': 'USDT'}, 'quoteCurrency': {'quote_sc': '0xc9882def23bc42d53895b8361d0b1edc7570bc6a', 'quote': 'FIST'}, 'baseAmount': 2748486.561303439, 'quoteAmount': 1454176.817368, 'date': {'dt': '2022-03-17'}, 'Total_USD': 2752394.424677198, 'Tx_count': 2035, 'smartContract': {'address': {'sc': '0xb4ec801aed8c92f2e69589518aaa127afb37d8c9'}}}]}}}
-
-print (type(result))
 result = result.get('data').get('ethereum').get('dexTrades')
-
-# for query in result:
-#   for item in query.items():
-#     print(item)
-#     print(type(item))
-
 df = pd.DataFrame.from_dict(result)
-# print (df)
-writer = pd.ExcelWriter('E:\Helix\dexTrades.xlsx', engine='xlsxwriter')
+writer = pd.ExcelWriter('E:\\Helix\\bitQueryTiming\\dexTrades.xlsx', engine='xlsxwriter')
 df.to_excel(writer, sheet_name='Sheet1', startrow=1, header=0,index=False)
 workbook  = writer.book
 worksheet = writer.sheets['Sheet1']
@@ -100,19 +92,48 @@ for col_num, value in enumerate(df.columns.values):
 #     else:
 #         worksheet.write(index+1, 0, value[0], yellow)
  
-worksheet.set_column("A:C", 16)
+worksheet.set_column("A:A", 100)
+worksheet.set_column("B:C", 90)
+worksheet.set_column("D:G", 33)
+worksheet.set_column("I:IS", 80)
 format2 = workbook.add_format({'bold':  True, 'align': 'vcenter', 'valign': 'top', 'text_wrap': True})
 worksheet.set_row(0, cell_format=format2)
-
-amountOfRows = worksheet.max_row
-amountOfColumns = worksheet.max_column
-
-for i in range(amountOfColumns):
-    for k in range(amountOfRows):
-        cell = str(worksheet[get_column_letter(i+1)+str(k+1)].value)
-        if( str(cell[0]) == "'address': {'address': '"):
-            newCell = "address"+cell[1:]
-            worksheet[get_column_letter(i+1)+str(k+1)]=newCell
-
 writer.save()
 print("gg")
+
+wb = openpyxl.load_workbook('E:\\Helix\\bitQueryTiming\\dexTrades.xlsx')
+ws = wb["Sheet1"]
+
+i = 0
+for r in range(1,ws.max_row+1):
+    for c in range(1,ws.max_column+1):
+        s = ws.cell(r,c).value
+        if ((s != None) and (type(s) is str)): 
+          ws.cell(r,c).value = re.sub(" 'address': {'address': '", " address: ", s)
+          i += 1
+
+i = 0
+for r in range(1,ws.max_row+1):
+    for c in range(1,ws.max_column+1):
+        s = ws.cell(r,c).value
+        if ((s != None) and (type(s) is str)): 
+          ws.cell(r,c).value = re.sub("'", "", s)
+          i += 1
+
+i = 0
+for r in range(1,ws.max_row+1):
+    for c in range(1,ws.max_column+1):
+        s = ws.cell(r,c).value
+        if ((s != None) and (type(s) is str)): 
+          ws.cell(r,c).value = re.sub("{", "", s)
+          i += 1
+
+i = 0
+for r in range(1,ws.max_row+1):
+    for c in range(1,ws.max_column+1):
+        s = ws.cell(r,c).value
+        if ((s != None) and (type(s) is str)): 
+          ws.cell(r,c).value = re.sub("}", "", s)
+          i += 1      
+
+wb.save('E:\\Helix\\bitQueryTiming\\dexTrades.xlsx')
